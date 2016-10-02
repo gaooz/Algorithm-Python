@@ -43,7 +43,6 @@ def left_balance(T):
         R_route(T)
     # left_child右子树的高度大。LR情况
     elif left_child._bf == RH:
-        # 做LR操作
         # 先更改各子树的bf
         left_child_right_child = left_child._right
         if left_child_right_child._bf == LH:
@@ -55,17 +54,57 @@ def left_balance(T):
         else:
             T._bf = EH
             left_child._bf = LH
-        left_child_right_child = EH
+        # 做LR操作
+        left_child_right_child._bf = EH
         L_route(left_child)
         R_route(T)
 
-# 右子树平衡化算法
+# 右子树平衡化算法(类比于左子树平衡化操作)
 def right_balance(T):
     pass
 
 # 向AVL树中插入节点：构造平衡二叉查找树
-def insert_AVLTree(T):
-    pass
+is_taller = False # 全局变量，标志树是否长高
+def insert_AVLTree(T, key):
+    global is_taller
+    # AVL树为空时
+    if T is None:
+        T = TreeNode(key, EH)
+        is_taller = True
+        return 0
+    else:
+        # 已有的关键字不会插入到AVl树中
+        if T._data == key:
+            return 0
+        if T._data > key: # 插入左子树中
+            if insert_AVLTree(T._left, key) == 0: # 插入不成功
+                return 0
+            if is_taller is True: # 判断如果长高
+                if T._bf == LH: # 原本左子树高（现在又长高了，说明左子树比右子树高2，打破了平衡，需要做左子树平衡化操作）
+                    left_balance(T)
+                    is_taller = False
+                elif T._bf == EH: # 原来左右子树等高
+                    T._bf = LH # 现在左子树高
+                    is_taller = True
+                else: # 原来右子树高，现在树等高
+                    T._bf = EH
+                    is_taller = False
+        else: # 插入右子树中
+            if insert_AVLTree(T._right, key) == 0: # 插入不成功
+                return 0
+            if is_taller is True: # 判断是否长高
+                if T._bf == LH:
+                    T._bf = EH
+                    is_taller = False
+                elif T._bf == EH:
+                    T._bf = RH
+                    is_taller = True
+                else:
+                    right_balance(T)
+                    is_taller = False
+
+    return 1
+
 
 
 
