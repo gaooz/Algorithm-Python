@@ -1,7 +1,7 @@
 # encoding=utf-8
 # date:2016-10-03
 # gaooz.com
-# 深度优先遍历
+# 广度优先遍历
 
 # 图节点的定义
 class GraphicsNode(object):
@@ -10,28 +10,27 @@ class GraphicsNode(object):
         # 图中与该顶点有关系的顶点集合
         self._neighbors = neighbors
 
-# 深度优先搜索遍历
-# graphics是图中节点的列表集合
-def DFSTraverse(graphics):
+# 用队列实现广度优先搜索遍历
+def BFSTraverse(graphics):
+    # 初始化所有的顶点为未访问的状态
     for i in range(len(graphics)):
-        graphics[i]._isTraverse = False # 标记为未被访问过
-    # 遍历
+        graphics[i]._isTraverse = False
+    # 队列
+    queue = []
     for i in range(len(graphics)):
         if graphics[i]._isTraverse is False:
-            DFS(graphics[i])
-
-def DFS(node):
-    # 标记为已经访问过
-    node._isTraverse = True
-    # 访问
-    print node._data,
-    if node._neighbors is not None:
-        for i in range(len(node._neighbors)):
-            if node._neighbors[i]._isTraverse is False:
-                DFS(node._neighbors[i])
-
+            graphics[i]._isTraverse = True
+            print graphics[i]._data
+            queue.append(graphics[i])
+            while len(queue) != 0:
+                node = queue.pop(0) # 队首元素出队
+                # 访问该顶点的邻接顶点并依次将他们入队
+                for j in range(len(node._neighbors)):
+                    if node._neighbors[j]._isTraverse is False:
+                        node._neighbors[j]._isTraverse = True
+                        print node._neighbors[j]._data
+                        queue.append(node._neighbors[j])
 ''' test
-
 if __name__ == "__main__":
     node1 = GraphicsNode(1, [])
     node2 = GraphicsNode(2, [])
@@ -46,5 +45,5 @@ if __name__ == "__main__":
     node5._neighbors = [node2, node3]
 
     graphics = [node1, node2, node3, node4, node5]
-    DFSTraverse(graphics)
+    BFSTraverse(graphics)
 '''
